@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="ingageSDK">
+  <library name="ingageSDK1">
     <CLASSES>
-      <root url="jar://D:/documentions/jar/ingageSDK.jar!/" />
+      <root url="jar://C:/tools/jar/ingageSDK.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

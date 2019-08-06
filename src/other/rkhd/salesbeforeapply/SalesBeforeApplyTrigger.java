@@ -39,26 +39,26 @@ public class SalesBeforeApplyTrigger implements Trigger {
         List<DataResult> dataResults = new ArrayList< DataResult >();
         List<XObject> extensionRequestList = triggerRequest.getDataList();
         String querySql = "";
-        String alltimeWork = "0";
-        String allOverDays = "0";
+        int allTimeWork = 0;
+        int allOverDays = 0;
         if (extensionRequestList != null && extensionRequestList.size() > 0) {
             for (XObject xObject : extensionRequestList) {
-                //获取wbscode
-                String wbscode = xObject.getAttribute("id");
-                logger.info("---------------get 获取wbscode:"+wbscode);
+                //获取延期延时申请中的wbscode
+                String wbsCode = xObject.getAttribute("customItem1__c");
+                logger.info("---------------get 获取wbscode:"+wbsCode);
                 /**
-                 * 根据wbscode获取到所有的超时工时 求和
+                 * 根据wbscode获取到所有的超时x工时 求和
                  */
-                querySql = " select customItem3__c,customItem5__c  from customEntity15__c where customItem1__c =  '" + wbscode + "' order by id asc   ";
+                querySql = " select customItem3__c,customItem5__c  from customEntity15__c where customItem1__c =  '" + wbsCode + "' order by id asc   ";
                 try {
-                    String pageResult = HttpUtil.sentRequestGetResult("POST","/data/v1/query",querySql + " limit 0,300 ");
+                    String pageResult = HttpUtil.sentRequestGetResult("POST","/data/v1/query","q",querySql + " limit 0,300 ");
                     if (StringUtils.isNotBlank(pageResult)){
                         JSONObject pageResultJson = JSONObject.parseObject(pageResult);
                         String totalSize = pageResultJson.get("totalSize").toString();
                         String count = pageResultJson.get("count").toString();
                         int pageSize = new BigDecimal("".equals(totalSize) ? "0" : totalSize).divide(new BigDecimal("".equals(count) ? "0" : count)).setScale(0, BigDecimal.ROUND_UP).intValue();
                         for (int i = 0; i < pageSize; i ++){
-                            String pageResult1 = HttpUtil.sentRequestGetResult("POST","/data/v1/query",querySql + " limit 300*"+i+",300 ");
+                            String pageResult1 = HttpUtil.sentRequestGetResult("POST","/data/v1/query","q",querySql + " limit 300*"+i+",300 ");
                             JSONObject pageResultJson1 = JSONObject.parseObject(pageResult1);
                             JSONArray jsonArray = JSONArray.parseArray(pageResultJson1.get("records").toString());
                             int size = jsonArray.size();
@@ -66,58 +66,50 @@ public class SalesBeforeApplyTrigger implements Trigger {
                                 JSONObject jsonObject = (JSONObject) jsonArray.get(i);
                                 //超时工时
                                 String overtimeWork  = jsonObject.get("customItem3__c").toString();
-                                alltimeWork = new BigDecimal(alltimeWork).add(new BigDecimal(overtimeWork)).toPlainString();
+                                allTimeWork = new BigDecimal(allTimeWork).add(new BigDecimal(overtimeWork)).intValue();
                                 //延期天数
                                 String overDay  = jsonObject.get("customItem5__c").toString();
-                                allOverDays = new BigDecimal(allOverDays).add(new BigDecimal(overDay)).toPlainString();
+                                allOverDays = new BigDecimal(allOverDays).add(new BigDecimal(overDay)).intValue();
                             }
                         }
                     }
                     /**
                      * update wbscode 中的  已批准超支工时（小时） 已批准延期（天数） 当前结束日期
                      */
-                    querySql = "select id,customItem17__c from  customEntity7__c where id = " + wbscode ;
-                    String pageResult2 = HttpUtil.sentRequestGetResult("POST","/data/v1/query",querySql);
+                    querySql = "select customItem17__c from  customEntity7__c where id = " + wbsCode ;
+                    String pageResult2 = HttpUtil.sentRequestGetResult("POST","q","/data/v1/query",querySql);
                     JSONObject pageResultJson1 = JSONObject.parseObject(pageResult2);
                     JSONArray jsonArray = JSONArray.parseArray(pageResultJson1.get("records").toString());
                     int size = jsonArray.size();
+                    String nowEndDate = "";
                     for (int j = 0; j < size; j++) {
                         JSONObject jsonObject = (JSONObject) jsonArray.get(j);
-                        String id  = jsonObject.get("id").toString();
-                        String nowEndDate  = jsonObject.get("customItem17__c").toString();
+                         //wbscode的当前结束日期
+                         nowEndDate  = jsonObject.get("customItem17__c").toString();
                     }
-
-                    JSONObject jsonObject = new JSONObject();
+                    nowEndDate = "".equals(nowEndDate) || nowEndDate == null ? DateUtil.getAfterDay(DateUtil.getSysDate(),allOverDays) : DateUtil.getAfterDay(nowEndDate,allOverDays) ;
                     JSONObject jsonObject1 = new JSONObject();
-                    jsonObject1.put("customItem25__c",alltimeWork);
+                    jsonObject1.put("customItem25__c",allTimeWork);
                     jsonObject1.put("customItem16__c",allOverDays);
-                    jsonObject1.put("customItem17__c","");
-                    jsonObject.put("data", jsonObject1);
-
-
-
-
+                    jsonObject1.put("customItem17__c",nowEndDate);
+                    String pageResult1 = HttpUtil.sentRequestGetResult("PATCH","/rest/data/v2/objects/customEntity7__c/"+wbsCode,"data",jsonObject1.toString());
+                    String httpCode = JSONObject.parseObject(pageResult1).get("code").toString();
+                    if ("200".equals(httpCode)) {
+                        logger.info("=======================================update success："+jsonObject1.toString());
+                    }else {
+                        logger.info("=======================================update fail："+jsonObject1.toString());
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    logger.error("--------------------IOexception:"+e.getMessage());
                 }
-
-
                 dataResults.add(new DataResult(true, "", xObject));
             }
         }else {
             return new TriggerResponse(false, "数据为空！", Collections.<DataResult>emptyList());
         }
-
-
-
-
-
-
-        return null;
+        return new TriggerResponse(false, "", dataResults);
     }
-
-
-
 
 
 

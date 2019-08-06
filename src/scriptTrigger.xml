@@ -4,15 +4,24 @@
     <config>
 
         <trigger>
-            <!-- From :  https://api.xiaoshouyi.com/data/v1/picks/dimension/belongs-->
-            <object>account</object>
+            <object>customEntity15__c</object>
             <!-- Options: add / update / delete-->
             <operate>add</operate>
             <!-- Options: before / after-->
-            <position>before</position>
+            <position>after</position>
             <order>1</order>
             <!-- Caution: match case / spell / full path-->
-            <class>other.rkhd.hh.WbsCodeBusinessTrigger</class>
+            <class>other.rkhd.salesbeforeapply.SalesBeforeApplyTrigger</class>
+        </trigger>
+        <trigger>
+            <object>customEntity15__c</object>
+            <!-- Options: add / update / delete-->
+            <operate>update</operate>
+            <!-- Options: before / after-->
+            <position>after</position>
+            <order>1</order>
+            <!-- Caution: match case / spell / full path-->
+            <class>other.rkhd.salesbeforeapply.SalesBeforeApplyTrigger</class>
         </trigger>
 
     </config>
