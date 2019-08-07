@@ -24,6 +24,27 @@
             <class>other.rkhd.salesbeforeapply.SalesBeforeApplyTrigger</class>
         </trigger>
 
+        <trigger>
+            <object>customEntity5__c</object>
+            <!-- Options: add / update / delete-->
+            <operate>add</operate>
+            <!-- Options: before / after-->
+            <position>after</position>
+            <order>1</order>
+            <!-- Caution: match case / spell / full path-->
+            <class>other.rkhd.timesheet.TimeSheetTimeWorkTrigger</class>
+        </trigger>
+        <trigger>
+            <object>customEntity5__c</object>
+            <!-- Options: add / update / delete-->
+            <operate>update</operate>
+            <!-- Options: before / after-->
+            <position>after</position>
+            <order>1</order>
+            <!-- Caution: match case / spell / full path-->
+            <class>other.rkhd.timesheet.TimeSheetTimeWorkTrigger</class>
+        </trigger>
+
     </config>
 
 </configs>
