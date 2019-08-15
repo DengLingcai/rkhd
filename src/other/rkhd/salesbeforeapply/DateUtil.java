@@ -51,22 +51,7 @@ public class DateUtil {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return new Date().getTime();
+        return System.currentTimeMillis();
     }
-
-
-   public static void main(String[] args) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd hh:mm");
-       try {
-           Date date = format.parse("2019-09-06 00:00");
-           Calendar calendar = Calendar.getInstance();
-           calendar.setTime(date);
-           System.out.println(calendar.getTime());
-       } catch (ParseException e) {
-           e.printStackTrace();
-       }
-
-    }
-
 
 }

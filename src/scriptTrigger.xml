@@ -3,47 +3,33 @@
 <configs>
     <config>
 
-        <trigger>
+        <!--<wfmTrigger>
             <object>customEntity15__c</object>
-            <!-- Options: add / update / delete-->
+            <class>other.rkhd.salesbeforeapply.SalesBeforeApplyTrigger</class>
+        </wfmTrigger>-->
+
+       <trigger>
+            <object>customEntity21__c</object>
             <operate>add</operate>
-            <!-- Options: before / after-->
             <position>after</position>
             <order>1</order>
-            <!-- Caution: match case / spell / full path-->
-            <class>other.rkhd.salesbeforeapply.SalesBeforeApplyTrigger</class>
+            <class>other.rkhd.timesheet.TimeSheetTimeWorkTrigger</class>
         </trigger>
         <trigger>
-            <object>customEntity15__c</object>
-            <!-- Options: add / update / delete-->
+            <object>customEntity21__c</object>
             <operate>update</operate>
-            <!-- Options: before / after-->
             <position>after</position>
             <order>1</order>
-            <!-- Caution: match case / spell / full path-->
-            <class>other.rkhd.salesbeforeapply.SalesBeforeApplyTrigger</class>
+            <class>other.rkhd.timesheet.TimeSheetTimeWorkTrigger</class>
+        </trigger>
+        <trigger>
+            <object>customEntity21__c</object>
+            <operate>delete</operate>
+            <position>after</position>
+            <order>1</order>
+            <class>other.rkhd.timesheet.TimeSheetTimeWorkTrigger</class>
         </trigger>
 
-        <trigger>
-            <object>customEntity5__c</object>
-            <!-- Options: add / update / delete-->
-            <operate>add</operate>
-            <!-- Options: before / after-->
-            <position>after</position>
-            <order>1</order>
-            <!-- Caution: match case / spell / full path-->
-            <class>other.rkhd.timesheet.TimeSheetTimeWorkTrigger</class>
-        </trigger>
-        <trigger>
-            <object>customEntity5__c</object>
-            <!-- Options: add / update / delete-->
-            <operate>update</operate>
-            <!-- Options: before / after-->
-            <position>after</position>
-            <order>1</order>
-            <!-- Caution: match case / spell / full path-->
-            <class>other.rkhd.timesheet.TimeSheetTimeWorkTrigger</class>
-        </trigger>
 
     </config>
 
