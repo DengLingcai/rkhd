@@ -52,7 +52,7 @@ public class SalesBeforeApplyTrigger implements ScriptTrigger {
              */
             querySql = " select customItem3__c,customItem5__c  from customEntity15__c where customItem1__c =  '" + wbsCode + "'  and approvalStatus = 3  order by id asc   ";
             try {
-                int pageSize = getPageSize(querySql + " limit 0,300 ");
+                int pageSize = getPageSize(querySql);
                 logger.info("----------------pageSize:" + pageSize);
                 for (int i = 0; i < pageSize; i++) {
                     int pageNo = 300 * i;
@@ -134,7 +134,6 @@ public class SalesBeforeApplyTrigger implements ScriptTrigger {
 
     /**
      * 获取页数
-     *
      * @param querySql
      * @return
      */
